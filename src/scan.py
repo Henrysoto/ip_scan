@@ -39,6 +39,7 @@ except IndexError:
         ipaddress.ip_address(ip)
     except ValueError:
         print('[-] Adresse IP invalide!')
+        print('[-] Usage: python scan.py [adresse ip] [nb de threads]')
         exit(1)
 
 ip = ip.split('.')
