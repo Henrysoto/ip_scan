@@ -23,7 +23,7 @@ except FileNotFoundError:
         file.write(data)
         file.close()
         print('[+] Ecriture dans "oui.txt"..')
-    except ImportError:
+    except (ImportError, ModuleNotFoundError):
         print('[-] La librairie requests est necessaire pour telecharger le fichier requis!')
         print('[-] Telecharger manuellement "oui.txt" depuis: http://standards-oui.ieee.org/oui.txt')
         exit(1)
