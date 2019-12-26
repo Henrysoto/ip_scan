@@ -136,6 +136,8 @@ print('[+] Classement par ordre croissant des adresses..')
 # Classement croissant des addresses
 online = sorted(online, key=lambda x: ipaddress.ip_address(x[0]))
 time.sleep(1)
+
+# Ecriture du fichier de log
 log = dt.strftime("%d%m%y_%I%M%p")
 log = f'scan_{log}.txt'
 print(f'[+] Ecriture du resultat dans "{log}"..')
