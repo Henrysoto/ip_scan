@@ -174,3 +174,4 @@ with open(log, encoding="utf-8", mode="w") as file:
 time.sleep(1)
 print('[+] Fin du script.')
 input('[>] Appuyez sur Entree pour quitter..')
+exit(0)
