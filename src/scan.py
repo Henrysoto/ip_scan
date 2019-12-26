@@ -4,6 +4,7 @@ import ipaddress
 import threading
 import re
 import time
+import platform
 from datetime import datetime
 from multiprocessing import Queue
 
@@ -62,6 +63,15 @@ handled = []
 # enregistrement horodatage
 dt = datetime.now()
 
+# verification du systeme d'exploitation
+plat = platform.system()
+if plat == 'Linux' or plat == 'Darwin':
+    ping = 'ping -c 1 -W 1000'
+    arp = 'arp'
+else:
+    ping = 'ping -n 1 -w 1000'
+    arp = 'arp -a'
+
 # instanciation de la queue pour les jobs
 q = Queue()
 for addr in iplist:
@@ -78,7 +88,8 @@ def worker():
             continue  # en cours de traitement
         
         handled.append(addr)
-        cmd = f'ping -n 1 -w 1000 {addr}'
+
+        cmd = f'{ping} {addr}'
         try:
             proc = subprocess.check_output(cmd)  # on lance un process de ping
             print(f'[+] {addr}')
@@ -86,7 +97,7 @@ def worker():
             continue
         
         # recuperation de la MAC address
-        cmd = f'arp -a {addr}'
+        cmd = f'{arp} {addr}'
         mac = None
         vendor = None
         try:
