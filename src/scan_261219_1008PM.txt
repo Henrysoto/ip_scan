@@ -1,6 +1,0 @@
-Adresse:	192.168.1.1
-MAC:		D4-60-E3-C7-92-A8
-Fabricant:	Sercomm Corporation.
-
-
----EOF---

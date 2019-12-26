@@ -64,13 +64,7 @@ handled = []
 dt = datetime.now()
 
 # verification du systeme d'exploitation
-plat = platform.system()
-if plat == 'Linux' or plat == 'Darwin':
-    ping = 'ping -c 1 -W 1000'
-    arp = 'arp'
-else:
-    ping = 'ping -n 1 -w 1000'
-    arp = 'arp -a'
+plat = True if platform.system() == 'Windows' else False
 
 # instanciation de la queue pour les jobs
 q = Queue()
@@ -89,20 +83,28 @@ def worker():
         
         handled.append(addr)
 
-        cmd = f'{ping} {addr}'
+        if not plat: # on ecrase les vars en fonction de l'OS
+            ping = ['ping', '-c', '1', '-W', '1000']
+            arp = ['arp']
+        else:
+            ping = ['ping', '-n', '1', '-w', '1000']
+            arp = ['arp', '-a']
+
+        ping.append(addr)
         try:
-            proc = subprocess.check_output(cmd)  # on lance un process de ping
+            proc = subprocess.run(ping, stdout=subprocess.DEVNULL, check=True)  # on lance un process de ping
             print(f'[+] {addr}')
         except subprocess.CalledProcessError:
             continue
         
         # recuperation de la MAC address
-        cmd = f'{arp} {addr}'
+        arp.append(addr)
         mac = None
         vendor = None
+        out = None
         try:
-            proc = subprocess.check_output(cmd)
-            mac = re.findall(r"(?:\w{2}-?:?){6}", str(proc),
+            proc = subprocess.run(arp, stdout=subprocess.PIPE, universal_newlines=True, check=True)
+            mac = re.findall(r"(?:\w{2}-?:?){6}", str(proc.stdout),
                              re.MULTILINE | re.IGNORECASE)
             mac = mac.pop().upper()
             print(f'[+] {mac}')
@@ -132,6 +134,7 @@ def worker():
                 online.append((addr, mac, 'Inconnu'))
         else:
             online.append((addr, 'Inconnu', 'Inconnu'))
+        
 
 
 # Lancement des threads
