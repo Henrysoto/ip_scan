@@ -7,12 +7,34 @@ import time
 from datetime import datetime
 from multiprocessing import Queue
 
+
+# Verifie que oui.txt est present sinon on le recupere
+try:
+    file = open('oui.txt', encoding='utf-8', mode='r')
+    file.close()
+except FileNotFoundError:
+    try:
+        import requests
+        print('[-] Le fichier "oui.txt" est manquant!')
+        print('[+] Telechargement du fichier..')
+        data = requests.get('http://standards-oui.ieee.org/oui.txt')
+        data = data.content.decode('utf-8')
+        file = open('oui.txt', encoding='utf-8', mode='w')
+        file.write(data)
+        file.close()
+        print('[+] Ecriture dans "oui.txt"..')
+    except ImportError:
+        print('[-] La librairie requests est necessaire pour telecharger le fichier requis!')
+        print('[-] Telecharger manuellement "oui.txt" depuis: http://standards-oui.ieee.org/oui.txt')
+        exit(1)
+    pass
+
 # Recuperation et formatage de l'adresse
 try:
     ip = sys.argv[1]
 except IndexError:
     try:
-        ip = input('IP: ')
+        ip = input('[>] Adresse IP: ')
         ipaddress.ip_address(ip)
     except ValueError:
         print('[-] Adresse IP invalide!')
@@ -59,7 +81,7 @@ def worker():
         cmd = f'ping -n 1 -w 1000 {addr}'
         try:
             proc = subprocess.check_output(cmd)  # on lance un process de ping
-            print(f'{addr}')
+            print(f'[+] {addr}')
         except subprocess.CalledProcessError:
             continue
         
@@ -72,7 +94,7 @@ def worker():
             mac = re.findall(r"(?:\w{2}-?:?){6}", str(proc),
                              re.MULTILINE | re.IGNORECASE)
             mac = mac.pop().upper()
-            print(f'{mac}')
+            print(f'[+] {mac}')
             try:
                 file = open("oui.txt", encoding="utf-8", mode="r")
                 lines = file.readlines()
@@ -89,7 +111,7 @@ def worker():
                 pass
 
         except (subprocess.CalledProcessError, ValueError, IndexError) as err:
-            print(f'[-] {addr} impossible de recuperer la MAC:\n{err}\n---')
+            print(f'[-] {addr} impossible de recuperer la MAC: [{err}]')
             continue
 
         if mac is not None:
@@ -136,3 +158,4 @@ with open(log, encoding="utf-8", mode="w") as file:
     file.write(content)
 time.sleep(1)
 print('[+] Fin du script.')
+input('[>] Appuyez sur Entree pour quitter..')
