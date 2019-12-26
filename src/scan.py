@@ -101,7 +101,6 @@ def worker():
         arp.append(addr)
         mac = None
         vendor = None
-        out = None
         try:
             proc = subprocess.run(arp, stdout=subprocess.PIPE, universal_newlines=True, check=True)
             mac = re.findall(r"(?:\w{2}-?:?){6}", str(proc.stdout),
