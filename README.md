@@ -1,5 +1,5 @@
 # ip_scan
-Python multiprocessing ip scanner
+Retrieving vendor's names from an IP
 
 Requirements:
 - Python >= 3.4
