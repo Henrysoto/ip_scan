@@ -6,4 +6,4 @@ Retrieving vendor's names from a MAC though the device IP.
 - oui.txt (http://standards-oui.ieee.org/oui.txt)
 
 ## Usage:
-python scan.py [ip] [threads]
+`python scan.py [ip] [threads]`
